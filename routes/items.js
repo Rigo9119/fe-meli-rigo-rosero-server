@@ -1,12 +1,10 @@
 import express from 'express';
-import { getItems, getItem } from '../utils/data.js'
+import { getItems, getItem, getItemDescription } from '../utils/data.js'
 
 const router = express.Router();
 
 const items = []; 
 const item = []
-
-getItem('MLA910190287').then(res => item.push(res));
 
 // la descripcion del objeto sale de la key plain_text
 
@@ -17,7 +15,9 @@ router.get('/', (req, res) => {
 router.get('/search', (req, res) => {
     const { q } = req.query.q; 
 
-    getItems(q).then(res => items.push(res));
+    getItems(q)
+        .then(res => items.push(res))
+        .catch(err => console.error(` error 🌓 ::=>${err}`));
 
     const mainListItems = items.map((item) => {
         const listItemObj = {
@@ -36,26 +36,29 @@ router.get('/search', (req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-    const { id } = req.params.id;
-    const limitItems = [...items[0].results].slice(0, 4);
-    const findItem = items.find((item) => item.id === id);
-    const itemArr = limitItems.map(item => {
+    const id = req.params.id;
+    
+    getItem(id)
+        .then(res => item.push(res))
+        .catch(err => console.error(` error 📫 ::=>${err}`));
+    
+    const itemArr = item.map(product => {
         const itemObj = {
             author: {
                 name: 'Rigo',
                 last_name: 'Rosero '
             },
             item : {
-                id: item.id,
-                title: item.title,
+                id: product.id,
+                title: product.title,
                 price: {
-                    currency: item.currency_id,
-                    amount: item.price
+                    currency: product.currency_id,
+                    amount: product.price
                 },
-                picture: item.thumbnail,
-                condition: item.condition,
-                free_shipping: item.shipping.free_shipping,
-                sold_quantity: item.sold_quantity,
+                picture: product.thumbnail,
+                condition: product.condition,
+                free_shipping: product.shipping.free_shipping,
+                sold_quantity: product.sold_quantity,
             }            
         }
 
@@ -66,33 +69,27 @@ router.get('/:id', (req, res) => {
 })
 
 router.get('/:id/description', (req, res) => {
-    const { id } = req.params.id;
-    const limitItems = [...items[0].results].slice(0, 4);
-    const findItem = items.find((item) => item.id === id);
-    const itemArr = limitItems.map(item => {
+    const id = req.params.id;
+
+    getItem(id)
+        .then(res => item.push(res))
+        .catch(err => console.error(` error ❎ ::=>${err}`));
+
+    const descObj = limitItems.map(item => {
         const itemObj = {
             author: {
                 name: 'Rigo',
                 last_name: 'Rosero '
             },
             item : {
-                id: item.id,
-                title: item.title,
-                price: {
-                    currency: item.currency_id,
-                    amount: item.price
-                },
-                picture: item.thumbnail,
-                condition: item.condition,
-                free_shipping: item.shipping.free_shipping,
-                sold_quantity: item.sold_quantity,
+                description: item.plain_text
             }            
         }
 
         return itemObj
     })
 
-    res.send(itemArr);    
+    res.send(descObj);    
 })
 
 

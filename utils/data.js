@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const baseUrl = 'https://api.mercadolibre.com/sites/MLA';
-const itemsUrl = 'https://api.mercadolibre.com/items/'
+const itemUrl = 'https://api.mercadolibre.com/items';
 
 async function getItems(query) {
     try {
@@ -9,23 +9,28 @@ async function getItems(query) {
 
         return res.data;
     } catch (err) {
-        return `error ::==> ${err}`;
+        return `error 🐍::==> ${err}`;
     }
 }
 
 async function getItem(itemId) {
     try {
-        const itemRes = await axios.get(`${itemsUrl}/${itemId}`);
-        const itemDescriptionRes = await axios.get(`${itemsUrl}/${id}/description`);
-
-        return {
-            itemNoDesc: itemRes.data,
-            itemDesc: itemDescriptionRes.data
-        };
-
+        const res = await axios.get(`${itemUrl}/${itemId}`);
+        
+        return res.data
     } catch (err) {
-        return `error ::==> ${err}`;
+        return `error 🏗️::==> ${err}`;
     }
 }
 
-export { getItems, getItem }
+async function getItemDescription(itemId) {
+    try {
+        const res = await axios.get(`${itemUrl}/${itemId}/description`);
+        
+        return res.data
+    } catch (err) {
+        return `error 🏗️::==> ${err}`;
+    }
+}
+
+export { getItems, getItem, getItemDescription }
