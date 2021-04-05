@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 
 router.get('/search', (req, res) => {
     const { q } = req.query.q; 
-
+    
     getItems(q)
         .then(res => items.push(res))
         .catch(err => console.error(` error 🌓 ::=>${err}`));
@@ -27,7 +27,7 @@ router.get('/search', (req, res) => {
                 last_name: 'Rosero '
             },
             categories: item.filters.map(filter => filter.values.map(value => value.name)[0]),
-            items: item.results.slice(0, 4)
+            items: item.results
         };
 
         return listItemObj;
