@@ -5,6 +5,7 @@ const router = express.Router();
 
 const items = []; 
 const item = []
+const description = [];
 
 // la descripcion del objeto sale de la key plain_text
 
@@ -42,6 +43,10 @@ router.get('/:id', (req, res) => {
         .then(res => item.push(res))
         .catch(err => console.error(` error 📫 ::=>${err}`));
     
+    getItemDescription(id)
+        .then(res => description.push(res))
+        .catch(err => console.error(` error 📫 ::=>${err}`));
+
     const itemArr = item.map(product => {
         const itemObj = {
             author: {
@@ -59,6 +64,7 @@ router.get('/:id', (req, res) => {
                 condition: product.condition,
                 free_shipping: product.shipping.free_shipping,
                 sold_quantity: product.sold_quantity,
+                description: description[0].plain_text,
             }            
         }
 
@@ -66,30 +72,6 @@ router.get('/:id', (req, res) => {
     })
 
     res.send(itemArr);
-})
-
-router.get('/:id/description', (req, res) => {
-    const id = req.params.id;
-
-    getItem(id)
-        .then(res => item.push(res))
-        .catch(err => console.error(` error ❎ ::=>${err}`));
-
-    const descObj = limitItems.map(item => {
-        const itemObj = {
-            author: {
-                name: 'Rigo',
-                last_name: 'Rosero '
-            },
-            item : {
-                description: item.plain_text
-            }            
-        }
-
-        return itemObj
-    })
-
-    res.send(descObj);    
 })
 
 
