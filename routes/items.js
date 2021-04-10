@@ -4,8 +4,7 @@ import { getItems, getItem, getItemDescription } from '../utils/data.js'
 const router = express.Router();
 
 const items = []; 
-const item = []
-const description = [];
+let item = {}, description = {};
 
 // la descripcion del objeto sale de la key plain_text
 
@@ -14,9 +13,9 @@ router.get('/', (req, res) => {
 })
 
 router.get('/search', (req, res) => {
-    const { q } = req.query.q; 
-    
-    getItems(q)
+    const query = req.query.query; 
+
+    getItems(query)
         .then(res => items.push(res))
         .catch(err => console.error(` error 🌓 ::=>${err}`));
 
@@ -38,40 +37,36 @@ router.get('/search', (req, res) => {
 
 router.get('/:id', (req, res) => {
     const id = req.params.id;
-    
+
     getItem(id)
-        .then(res => item.push(res))
+        .then(res => item = {...res})
         .catch(err => console.error(` error 📫 ::=>${err}`));
     
     getItemDescription(id)
-        .then(res => description.push(res))
+        .then(res => description = {...res})
         .catch(err => console.error(` error 📫 ::=>${err}`));
 
-    const itemArr = item.map(product => {
-        const itemObj = {
+    const product = {
             author: {
                 name: 'Rigo',
                 last_name: 'Rosero '
             },
             item : {
-                id: product.id,
-                title: product.title,
+                id: item?.id,
+                title: item?.title,
                 price: {
-                    currency: product.currency_id,
-                    amount: product.price
+                    currency: item?.currency_id,
+                    amount: item?.price
                 },
-                picture: product.thumbnail,
-                condition: product.condition,
-                free_shipping: product.shipping.free_shipping,
-                sold_quantity: product.sold_quantity,
-                description: description[0].plain_text,
+                picture: item?.thumbnail,
+                condition: item?.condition,
+                free_shipping: item?.shipping?.free_shipping,
+                sold_quantity: item?.sold_quantity,
+                description: description?.plain_text,
             }            
-        }
+        }       
 
-        return itemObj
-    })
-
-    res.send(itemArr);
+    res.send(product);
 })
 
 
