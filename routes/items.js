@@ -3,8 +3,7 @@ import { getItems, getItem, getItemDescription } from '../utils/data.js'
 
 const router = express.Router();
 
-const items = []; 
-let item = {}, description = {};
+let products = {}, item = {}, description = {};
 
 // la descripcion del objeto sale de la key plain_text
 
@@ -16,23 +15,24 @@ router.get('/search', (req, res) => {
     const query = req.query.query; 
 
     getItems(query)
-        .then(res => items.push(res))
+        .then(res => products = {...res})
         .catch(err => console.error(` error 🌓 ::=>${err}`));
 
-    const mainListItems = items.map((item) => {
-        const listItemObj = {
+        const listObj = {
             author: {
                 name: 'Rigo',
                 last_name: 'Rosero '
             },
-            categories: item.filters.map(filter => filter.values.map(value => value.name)[0]),
-            items: item.results
+            categories: products?.available_filters?.map(
+                filter => filter.values?.map(
+                    value => value.name
+                )
+            )[0],
+            items: products?.results
+
         };
 
-        return listItemObj;
-    })
-
-    res.send(mainListItems);
+    res.send(listObj);
 })
 
 router.get('/:id', (req, res) => {
