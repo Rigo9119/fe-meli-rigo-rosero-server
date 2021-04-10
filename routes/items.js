@@ -29,7 +29,6 @@ router.get('/search', (req, res) => {
                 )
             )[0],
             items: products?.results
-
         };
 
     res.send(listObj);
